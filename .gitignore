@@ -63,3 +63,6 @@ test_data/
 
 # Pycharm
 .idea
+
+# Project
+src/frontend/imgs
