@@ -2,4 +2,4 @@
 
 **`StuctPro`** is a structural analysis and design software.
 
-_A compressive description of the project is underway_
+_A comprehensive description of the project is underway_
