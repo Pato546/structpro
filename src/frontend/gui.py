@@ -11,7 +11,7 @@ class MainFrame(wx.Frame):
         super().__init__(parent, *args, **kwargs)
 
         self.menuBar = FM.FlatMenuBar(parent=self, iconSize=16, spacer=10, options=FM.FM_OPT_IS_LCD)
-        self.createMenus()
+        self.CreateMenus()
 
         self.mainWindow = MainWindow(self)
 
@@ -25,7 +25,7 @@ class MainFrame(wx.Frame):
 
         mainSizer.Layout()
 
-    def createMenus(self):
+    def CreateMenus(self):
         fileMenu = FM.FlatMenu()
         newModel = FM.FlatMenuItem(fileMenu, id=wx.ID_NEW, label="New", helpString="Create a New Model")
         openModel = FM.FlatMenuItem(fileMenu, id=wx.ID_OPEN, label="Open", helpString="Open an existing model")
@@ -108,9 +108,9 @@ class MainFrame(wx.Frame):
         self.menuBar.Append(pluginsMenu, title="&Plugins")
         self.menuBar.Append(helpMenu, title="&Help")
 
-        self.Bind(event=wx.EVT_MENU, handler=self.exitApp, source=exitProgram)
+        self.Bind(event=wx.EVT_MENU, handler=self.ExitApp, source=exitProgram)
 
-    def exitApp(self, event):
+    def ExitApp(self, event):
         self.Close()
 
 
@@ -119,7 +119,7 @@ class MainWindow(wx.Panel):
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        self.SetBackgroundColour("#0000ff")
+        # self.SetBackgroundColour("#0000ff")
 
         self.toolBar1 = wx.ToolBar(self, style=wx.TB_VERTICAL)
         self.toolBar1.SetBackgroundColour("#ff0000")
@@ -136,3 +136,12 @@ class MainWindow(wx.Panel):
         vbox.Add(hbox)
 
         self.SetSizer(vbox)
+
+        self.Bind(event=wx.EVT_LEFT_DOWN, handler=self.OnMouseDown)
+
+    def OnMouseDown(self, event):
+        dc = wx.ClientDC(self)
+        pen = wx.Pen("red")
+        pen.SetWidth(20)
+        dc.SetPen(pen)
+        dc.DrawPoint(event.GetPosition())
