@@ -1,8 +1,8 @@
 import wx
-import wx.lib.agw.zoombar as ZB
+import wx.lib.agw.flatnotebook as fnb
 
 
-class CDI(ZB.ZoomBar):
+class CDI(wx.ToolBar):
     """Command Line Interface"""
 
     def __init__(self, parent, *args, **kwargs):
@@ -21,6 +21,30 @@ class CDI(ZB.ZoomBar):
         hbox.Add(self.searchCommand, proportion=1, flag=wx.ALIGN_CENTER_VERTICAL)
 
         self.SetSizer(hbox)
+
+
+class Window2D(wx.Panel):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
+        self.SetBackgroundColour("green")
+
+
+class Window3D(wx.Panel):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+        self.parent = parent
+        self.SetBackgroundColour("blue")
+
+
+class RandomPanel(wx.Panel):
+    """"""
+    def __init__(self, parent, color):
+        """Constructor"""
+        wx.Panel.__init__(self, parent)
+        self.SetBackgroundColour(color)
+
+
 
 
 
