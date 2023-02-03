@@ -1,3 +1,4 @@
+import functools
 import pathlib
 
 import wx
@@ -9,17 +10,32 @@ from . import controls
 IMG_PATH = str((pathlib.Path(__file__).parent / "imgs/").absolute())
 
 
-class IconPath:
-    new = IMG_PATH + r"\new.png"
-    open = IMG_PATH + r"\open.gif"
-    save = IMG_PATH + r"\save.png"
-    save_as = IMG_PATH + r"\save_as.png"
-    exit = IMG_PATH + r"\close.png"
-    pointer = IMG_PATH + r"\pointer.gif"
-    node = IMG_PATH + r"\node.gif"
-    member = IMG_PATH + r"\member.gif"
-    grid = IMG_PATH + r"\grid.png"
-    show_grid16 = IMG_PATH + r"\show_grid16.png"
+class IconProvider:
+    IconPaths = {
+        "new": IMG_PATH + r"\new.png",
+        "open": IMG_PATH + r"\open.gif",
+        "save": IMG_PATH + r"\save.png",
+        "save_as": IMG_PATH + r"\save_as.png",
+        "exit": IMG_PATH + r"\close.png",
+        "pointer": IMG_PATH + r"\pointer.gif",
+        "node": IMG_PATH + r"\node.gif",
+        "member": IMG_PATH + r"\member.gif",
+        "grid": IMG_PATH + r"\grid.png",
+        "show_grid": IMG_PATH + r"\show_grid16.png",
+        "zoom_in": IMG_PATH + r"\zoom_in.png",
+        "zoom_out": IMG_PATH + r"\zoom_out.png",
+        "undo": IMG_PATH + r"\undo.png",
+        "redo": IMG_PATH + r"\redo.png",
+        "show_axes": IMG_PATH + r"\show_axes.png",
+    }
+
+    @functools.cache
+    def __call__(self, key):
+        img = wx.Image(self.IconPaths.get(key))
+        return wx.Bitmap(img)
+
+
+iconProvider = IconProvider()
 
 
 class MainFrame(wx.Frame):
@@ -27,24 +43,23 @@ class MainFrame(wx.Frame):
 
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
-        self.newIcon = wx.Bitmap(IconPath.new)
-        self.openIcon = wx.Bitmap(IconPath.open)
-        self.saveIcon = wx.Bitmap(IconPath.save)
-        self.saveAsIcon = wx.Bitmap(IconPath.save_as)
-        self.exitIcon = wx.Bitmap(IconPath.exit)
-        self.pointerIcon = wx.Bitmap(IconPath.pointer)
-        self.nodeIcon = wx.Bitmap(IconPath.node)
-        self.memberIcon = wx.Bitmap(IconPath.member)
-        self.gridIcon = wx.Bitmap(IconPath.grid)
-        self.showGridIcon = wx.Bitmap(IconPath.show_grid16)
 
-        self.menuBar = fm.FlatMenuBar(parent=self, iconSize=16, spacer=10, options=fm.FM_OPT_IS_LCD)
+        self.menuBar = fm.FlatMenuBar(
+            parent=self, iconSize=16, spacer=10, options=fm.FM_OPT_IS_LCD
+        )
         self.CreateMenus()
 
-        self.toolbar = wx.ToolBar(self, style=wx.TB_HORIZONTAL | wx.TB_FLAT | wx.NO_BORDER)
-        self.toolbar.AddTool(wx.ID_NEW, "new", self.newIcon)
-        self.toolbar.AddTool(wx.ID_OPEN, "open", self.openIcon)
-        self.toolbar.AddTool(wx.ID_SAVE, "save", self.saveIcon)
+        self.toolbar = wx.ToolBar(
+            self, style=wx.TB_HORIZONTAL | wx.TB_FLAT | wx.NO_BORDER
+        )
+        self.toolbar.AddTool(wx.ID_NEW, "new", iconProvider("new"))
+        self.toolbar.AddTool(wx.ID_OPEN, "open", iconProvider("open"))
+        self.toolbar.AddTool(wx.ID_SAVE, "save", iconProvider("save"))
+        self.toolbar.AddSeparator()
+        self.toolbar.AddTool(wx.ID_UNDO, "undo", iconProvider("undo"))
+        self.toolbar.AddTool(wx.ID_REDO, "redo", iconProvider("redo"))
+        self.toolbar.AddTool(wx.ID_ZOOM_IN, "zoom_in", iconProvider("zoom_in"))
+        self.toolbar.AddTool(wx.ID_ZOOM_OUT, "zoom_out", iconProvider("zoom_out"))
         self.toolbar.AddSeparator()
         self.toolbar.Realize()
 
@@ -63,16 +78,41 @@ class MainFrame(wx.Frame):
 
     def CreateMenus(self):
         fileMenu = fm.FlatMenu()
-        newModel = fm.FlatMenuItem(fileMenu, id=wx.ID_NEW, label="New", helpString="Create a New Model",
-                                   normalBmp=self.newIcon)
-        openModel = fm.FlatMenuItem(fileMenu, id=wx.ID_OPEN, label="Open", helpString="Open an existing model",
-                                    normalBmp=self.openIcon)
-        saveModel = fm.FlatMenuItem(fileMenu, id=wx.ID_SAVE, label="Save", helpString="Saves a model",
-                                    normalBmp=self.saveIcon)
-        saveAs = fm.FlatMenuItem(fileMenu, id=wx.ID_SAVEAS, label="Save As", helpString="",
-                                 normalBmp=self.saveAsIcon)
-        exitProgram = fm.FlatMenuItem(fileMenu, id=wx.ID_EXIT, label="Exit", helpString="Closes the program",
-                                      normalBmp=self.exitIcon)
+        newModel = fm.FlatMenuItem(
+            fileMenu,
+            id=wx.ID_NEW,
+            label="New",
+            helpString="Create a New Model",
+            normalBmp=iconProvider("pointer"),
+        )
+        openModel = fm.FlatMenuItem(
+            fileMenu,
+            id=wx.ID_OPEN,
+            label="Open",
+            helpString="Open an existing model",
+            normalBmp=iconProvider("open"),
+        )
+        saveModel = fm.FlatMenuItem(
+            fileMenu,
+            id=wx.ID_SAVE,
+            label="Save",
+            helpString="Saves a model",
+            normalBmp=iconProvider("save"),
+        )
+        saveAs = fm.FlatMenuItem(
+            fileMenu,
+            id=wx.ID_SAVEAS,
+            label="Save As",
+            helpString="",
+            normalBmp=iconProvider("save_as"),
+        )
+        exitProgram = fm.FlatMenuItem(
+            fileMenu,
+            id=wx.ID_EXIT,
+            label="Exit",
+            helpString="Closes the program",
+            normalBmp=iconProvider("exit"),
+        )
         fileMenu.AppendItem(newModel)
         fileMenu.AppendSeparator()
         fileMenu.AppendItem(openModel)
@@ -82,15 +122,43 @@ class MainFrame(wx.Frame):
         fileMenu.AppendItem(exitProgram)
 
         editMenu = fm.FlatMenu()
-        undo = fm.FlatMenuItem(editMenu, id=wx.ID_UNDO, label="Undo\tCtrl+Z", helpString="")
-        redo = fm.FlatMenuItem(editMenu, id=wx.ID_REDO, label="Redo\tCtrl+Y", helpString="")
-        zoomIn = fm.FlatMenuItem(editMenu, id=wx.ID_ZOOM_IN, label="Zoom In", helpString="")
-        zoomOut = fm.FlatMenuItem(editMenu, id=wx.ID_ZOOM_OUT, label="Zoom Out", helpString="")
-        defineGrid = fm.FlatMenuItem(editMenu, id=wx.ID_ANY, label="Define Grid", helpString="",
-                                     normalBmp=self.gridIcon)
-        showGrid = fm.FlatMenuItem(editMenu, id=wx.ID_ANY, label="Show Grid", helpString="",
-                                   normalBmp=self.showGridIcon)
-        showAxes = fm.FlatMenuItem(editMenu, id=wx.ID_ANY, label="Show Axes", helpString="")
+        undo = fm.FlatMenuItem(
+            editMenu, id=wx.ID_UNDO, label="Undo\tCtrl+Z", helpString="", normalBmp=iconProvider("undo")
+        )
+        redo = fm.FlatMenuItem(
+            editMenu, id=wx.ID_REDO, label="Redo\tCtrl+Y", helpString="", normalBmp=iconProvider("redo")
+        )
+        zoomIn = fm.FlatMenuItem(
+            editMenu,
+            id=wx.ID_ZOOM_IN,
+            label="Zoom In",
+            helpString="",
+            normalBmp=iconProvider("zoom_in"),
+        )
+        zoomOut = fm.FlatMenuItem(
+            editMenu,
+            id=wx.ID_ZOOM_OUT,
+            label="Zoom Out",
+            helpString="",
+            normalBmp=iconProvider("zoom_out"),
+        )
+        defineGrid = fm.FlatMenuItem(
+            editMenu,
+            id=wx.ID_ANY,
+            label="Define Grid",
+            helpString="",
+            normalBmp=iconProvider("grid"),
+        )
+        showGrid = fm.FlatMenuItem(
+            editMenu,
+            id=wx.ID_ANY,
+            label="Show Grid",
+            helpString="",
+            normalBmp=iconProvider("show_grid"),
+        )
+        showAxes = fm.FlatMenuItem(
+            editMenu, id=wx.ID_ANY, label="Show Axes", helpString="", normalBmp=iconProvider("show_axes")
+        )
         editMenu.AppendItem(undo)
         editMenu.AppendItem(redo)
         editMenu.AppendSeparator()
@@ -103,18 +171,30 @@ class MainFrame(wx.Frame):
 
         defineMenu = fm.FlatMenu()
         load = fm.FlatMenuItem(defineMenu, id=wx.ID_ANY, label="Load", helpString="")
-        frameSection = fm.FlatMenuItem(defineMenu, id=wx.ID_ANY, label="Frame Section", helpString="")
-        material = fm.FlatMenuItem(defineMenu, id=wx.ID_ANY, label="Material", helpString="")
+        frameSection = fm.FlatMenuItem(
+            defineMenu, id=wx.ID_ANY, label="Frame Section", helpString=""
+        )
+        material = fm.FlatMenuItem(
+            defineMenu, id=wx.ID_ANY, label="Material", helpString=""
+        )
         defineMenu.AppendItem(load)
         defineMenu.AppendItem(frameSection)
         defineMenu.AppendItem(material)
 
         analyzeMenu = fm.FlatMenu()
-        staticAnalysis = fm.FlatMenuItem(analyzeMenu, id=wx.ID_ANY, label="Run Static Analysis", helpString="")
-        staticAnalysisResults = fm.FlatMenuItem(analyzeMenu, id=wx.ID_ANY, label="Tabulate Static Analysis Results")
+        staticAnalysis = fm.FlatMenuItem(
+            analyzeMenu, id=wx.ID_ANY, label="Run Static Analysis", helpString=""
+        )
+        staticAnalysisResults = fm.FlatMenuItem(
+            analyzeMenu, id=wx.ID_ANY, label="Tabulate Static Analysis Results"
+        )
         staticAnalysisResults.Enable(enable=False)
-        dynamicAnalysis = fm.FlatMenuItem(analyzeMenu, id=wx.ID_ANY, label="Run Dynamic Analysis", helpString="")
-        dynamicAnalysisResults = fm.FlatMenuItem(analyzeMenu, id=wx.ID_ANY, label="Tabulate Dynamic Analysis Results")
+        dynamicAnalysis = fm.FlatMenuItem(
+            analyzeMenu, id=wx.ID_ANY, label="Run Dynamic Analysis", helpString=""
+        )
+        dynamicAnalysisResults = fm.FlatMenuItem(
+            analyzeMenu, id=wx.ID_ANY, label="Tabulate Dynamic Analysis Results"
+        )
         dynamicAnalysisResults.Enable(enable=False)
         analyzeMenu.AppendItem(staticAnalysis)
         analyzeMenu.AppendItem(staticAnalysisResults)
@@ -122,23 +202,37 @@ class MainFrame(wx.Frame):
         analyzeMenu.AppendItem(dynamicAnalysisResults)
 
         displayMenu = fm.FlatMenu()
-        bendingMoment = fm.FlatMenuItem(displayMenu, id=wx.ID_ANY, label="Bending Moment", helpString="")
-        shearForce = fm.FlatMenuItem(displayMenu, id=wx.ID_ANY, label="Shear Force", helpString="")
-        reaction = fm.FlatMenuItem(displayMenu, id=wx.ID_ANY, label="Reactions", helpString="")
-        deflection = fm.FlatMenuItem(displayMenu, id=wx.ID_ANY, label="Deflection", helpString="")
+        bendingMoment = fm.FlatMenuItem(
+            displayMenu, id=wx.ID_ANY, label="Bending Moment", helpString=""
+        )
+        shearForce = fm.FlatMenuItem(
+            displayMenu, id=wx.ID_ANY, label="Shear Force", helpString=""
+        )
+        reaction = fm.FlatMenuItem(
+            displayMenu, id=wx.ID_ANY, label="Reactions", helpString=""
+        )
+        deflection = fm.FlatMenuItem(
+            displayMenu, id=wx.ID_ANY, label="Deflection", helpString=""
+        )
         displayMenu.AppendItem(bendingMoment)
         displayMenu.AppendItem(shearForce)
         displayMenu.AppendItem(reaction)
         displayMenu.AppendItem(deflection)
 
         pluginsMenu = fm.FlatMenu()
-        addPlugin = fm.FlatMenuItem(pluginsMenu, id=wx.ID_UNDO, label="Add/Show Plugin", helpString="")
+        addPlugin = fm.FlatMenuItem(
+            pluginsMenu, id=wx.ID_UNDO, label="Add/Show Plugin", helpString=""
+        )
         pluginsMenu.AppendItem(addPlugin)
 
         helpMenu = fm.FlatMenu()
-        quickIntro = fm.FlatMenuItem(helpMenu, id=wx.ID_ANY, label="Quick Introduction", helpString="")
+        quickIntro = fm.FlatMenuItem(
+            helpMenu, id=wx.ID_ANY, label="Quick Introduction", helpString=""
+        )
         about = fm.FlatMenuItem(helpMenu, id=wx.ID_ANY, label="About", helpString="")
-        checkUpdate = fm.FlatMenuItem(helpMenu, id=wx.ID_ANY, label="Check for Updates", helpString="")
+        checkUpdate = fm.FlatMenuItem(
+            helpMenu, id=wx.ID_ANY, label="Check for Updates", helpString=""
+        )
         helpMenu.AppendItem(quickIntro)
         helpMenu.AppendItem(about)
         helpMenu.AppendItem(checkUpdate)
@@ -157,6 +251,11 @@ class MainFrame(wx.Frame):
         self.Close()
 
 
+class ModelViewWindow(wx.Panel):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+
 class MainWindow(wx.Panel):
     """Main Panel on which all other panels are laid on"""
 
@@ -165,30 +264,36 @@ class MainWindow(wx.Panel):
         self.parent = parent
 
         self.SetBackgroundColour("red")
-        self.toolBar = wx.ToolBar(self, style=wx.TB_VERTICAL | wx.TB_FLAT | wx.NO_BORDER)
-        self.toolBar.AddTool(wx.ID_ANY, "pointer", parent.pointerIcon)
+        self.toolBar = wx.ToolBar(
+            self, style=wx.TB_VERTICAL | wx.TB_FLAT | wx.NO_BORDER
+        )
+        self.toolBar.AddTool(wx.ID_ANY, "pointer", iconProvider("pointer"))
         self.toolBar.AddSeparator()
-        self.toolBar.AddTool(wx.ID_ANY, "node", parent.nodeIcon)
+        self.toolBar.AddTool(wx.ID_ANY, "node", iconProvider("node"))
         self.toolBar.AddSeparator()
-        self.toolBar.AddTool(wx.ID_ANY, "member", parent.memberIcon)
+        self.toolBar.AddTool(wx.ID_ANY, "member", iconProvider("member"))
         self.toolBar.AddSeparator()
-        self.toolBar.AddTool(wx.ID_ANY, "grid", parent.gridIcon)
+        self.toolBar.AddTool(wx.ID_ANY, "grid", iconProvider("grid"))
         self.toolBar.AddSeparator()
-        self.toolBar.AddTool(wx.ID_ANY, "show_grid", parent.showGridIcon)
+        self.toolBar.AddTool(wx.ID_ANY, "show_grid", iconProvider("show_grid"))
+        self.toolBar.AddSeparator()
+        self.toolBar.AddTool(wx.ID_ANY, "show_axes", iconProvider("show_axes"))
         self.toolBar.AddSeparator()
         self.toolBar.Realize()
 
-        self.splitter = wx.SplitterWindow(self)
-        p1 = wx.Panel(self.splitter)
-        p1.SetBackgroundColour("blue")
-        p2 = wx.Panel(self.splitter)
-        p2.SetBackgroundColour("green")
-        self.splitter.SplitVertically(p1, p2)
-        self.splitter.SetSashPosition(500)
+        # self.splitter = wx.SplitterWindow(self, style=wx.SP_LIVE_UPDATE)
+        # self.window2D = controls.Window2D(self.splitter)
+        # self.window3D = controls.Window3D(self.splitter)
+        # self.splitter.SplitVertically(self.window2D, self.window3D)
+        # w, h = self.parent.GetSize()
+        # self.splitter.SetSashPosition(w / 2)
+
+        self.modelViewWindow = ModelViewWindow(self)
+        self.modelViewWindow.SetBackgroundColour("cyan")
 
         hbox = wx.BoxSizer(orient=wx.HORIZONTAL)
         hbox.Add(self.toolBar, flag=wx.EXPAND)
-        hbox.Add(self.splitter, proportion=1, flag=wx.EXPAND)
+        hbox.Add(self.modelViewWindow, proportion=1, flag=wx.EXPAND)
 
         self.SetSizer(hbox)
 
