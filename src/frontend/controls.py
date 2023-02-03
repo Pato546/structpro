@@ -6,45 +6,40 @@ class CDI(wx.ToolBar):
     """Command Line Interface"""
 
     def __init__(self, parent, *args, **kwargs):
-        super().__init__(parent, *args, size=(400, 35), **kwargs)
-        self.SetBackgroundColour("#00ff00")
-
-        self.closeBtn = wx.Button(self, label="1", size=(20, 20))
-        self.settingsBtn = wx.Button(self, label="2", size=(20, 20))
-        self.searchCommand = wx.SearchCtrl(self, style=wx.TE_PROCESS_ENTER)
-        self.searchCommand.ShowCancelButton(show=True)
-        self.searchCommand.SetHint("Type a command")
-
-        hbox = wx.BoxSizer(orient=wx.HORIZONTAL)
-        hbox.Add(self.closeBtn, flag=wx.ALIGN_CENTER_VERTICAL)
-        hbox.Add(self.settingsBtn, flag=wx.ALIGN_CENTER_VERTICAL)
-        hbox.Add(self.searchCommand, proportion=1, flag=wx.ALIGN_CENTER_VERTICAL)
-
-        self.SetSizer(hbox)
+        super().__init__(
+            parent, *args, size=(200, 35), style=wx.TB_HORIZONTAL | wx.TB_FLAT, **kwargs
+        )
+        self.SetBackgroundColour("#000000")
 
 
-class Window2D(wx.Panel):
+FLAT_NOTEBOOK_STYLES = (
+    fnb.FNB_DROPDOWN_TABS_LIST
+    | fnb.FNB_RIBBON_TABS
+    | fnb.FNB_SMART_TABS
+    | fnb.FNB_X_ON_TAB
+    | fnb.FNB_TABS_BORDER_SIMPLE
+    | fnb.FNB_ALLOW_FOREIGN_DND
+    | fnb.FNB_NAV_BUTTONS_WHEN_NEEDED
+)
+
+
+class Window2D(fnb.FlatNotebook):
     def __init__(self, parent, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, agwStyle=FLAT_NOTEBOOK_STYLES, **kwargs)
         self.parent = parent
         self.SetBackgroundColour("green")
 
+        self.canvas = wx.Panel(self)
+        self.AddPage(self.canvas, "2-D View")
+        self.AddPage(wx.Panel(self), "3-D View")
 
-class Window3D(wx.Panel):
+
+class Window3D(fnb.FlatNotebook):
     def __init__(self, parent, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, agwStyle=FLAT_NOTEBOOK_STYLES, **kwargs)
         self.parent = parent
         self.SetBackgroundColour("blue")
 
-
-class RandomPanel(wx.Panel):
-    """"""
-    def __init__(self, parent, color):
-        """Constructor"""
-        wx.Panel.__init__(self, parent)
-        self.SetBackgroundColour(color)
-
-
-
-
-
+        self.canvas = wx.Panel(self)
+        self.AddPage(self.canvas, "2-D View")
+        self.AddPage(wx.Panel(self), "3-D View")
