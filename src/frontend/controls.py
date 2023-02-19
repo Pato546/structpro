@@ -1,17 +1,6 @@
 import wx
 import wx.lib.agw.flatnotebook as fnb
 
-
-class CDI(wx.ToolBar):
-    """Command Line Interface"""
-
-    def __init__(self, parent, *args, **kwargs):
-        super().__init__(
-            parent, *args, size=(200, 35), style=wx.TB_HORIZONTAL | wx.TB_FLAT, **kwargs
-        )
-        self.SetBackgroundColour("#000000")
-
-
 FLAT_NOTEBOOK_STYLES = (
     fnb.FNB_DROPDOWN_TABS_LIST
     | fnb.FNB_RIBBON_TABS
@@ -23,23 +12,47 @@ FLAT_NOTEBOOK_STYLES = (
 )
 
 
+class CDI(wx.ToolBar):
+    """Command Line Interface"""
+
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(
+            parent, *args, size=(200, 35), style=wx.TB_HORIZONTAL | wx.TB_FLAT, **kwargs
+        )
+        self.SetBackgroundColour("#000000")
+
+
+class Canvas2D(wx.Panel):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.parent = parent
+        self.name = "2-D View"
+
+        self.SetBackgroundColour("blue")
+
+
 class Window2D(fnb.FlatNotebook):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, agwStyle=FLAT_NOTEBOOK_STYLES, **kwargs)
-        self.parent = parent
-        self.SetBackgroundColour("green")
 
-        self.canvas = wx.Panel(self)
-        self.AddPage(self.canvas, "2-D View")
-        self.AddPage(wx.Panel(self), "3-D View")
+        self.parent = parent
+        self.canvas = Canvas2D(self)
+        self.AddPage(self.canvas, self.canvas.name)
+
+
+class Canvas3D(wx.Panel):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+        self.parent = parent
+        self.name = "3-D View"
 
 
 class Window3D(fnb.FlatNotebook):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, agwStyle=FLAT_NOTEBOOK_STYLES, **kwargs)
         self.parent = parent
-        self.SetBackgroundColour("blue")
 
-        self.canvas = wx.Panel(self)
-        self.AddPage(self.canvas, "2-D View")
-        self.AddPage(wx.Panel(self), "3-D View")
+        self.canvas = Canvas3D(self)
+        self.AddPage(self.canvas, self.canvas.name)
