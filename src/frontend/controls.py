@@ -1,5 +1,10 @@
+import functools
+
 import wx
 import wx.lib.agw.flatnotebook as fnb
+
+from . import IMG_PATH
+
 
 FLAT_NOTEBOOK_STYLES = (
     fnb.FNB_DROPDOWN_TABS_LIST
@@ -10,6 +15,24 @@ FLAT_NOTEBOOK_STYLES = (
     | fnb.FNB_ALLOW_FOREIGN_DND
     | fnb.FNB_NAV_BUTTONS_WHEN_NEEDED
 )
+
+
+class IconProvider:
+    """Provides and caches bitmap icons
+
+    Example:
+
+    >>> IconProvider.get("new") == IconProvider.get("new")
+    >>> True
+
+    """
+
+    @classmethod
+    @functools.cache
+    def get(cls, icon: str):
+        return wx.Bitmap(IMG_PATH + f"\\{icon}.gif")
+
+
 
 
 class CDI(wx.ToolBar):
