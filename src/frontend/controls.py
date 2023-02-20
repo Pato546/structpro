@@ -24,15 +24,12 @@ class IconProvider:
 
     >>> IconProvider.get("new") == IconProvider.get("new")
     >>> True
-
     """
 
     @classmethod
     @functools.cache
     def get(cls, icon: str):
         return wx.Bitmap(IMG_PATH + f"\\{icon}.gif")
-
-
 
 
 class CDI(wx.ToolBar):
@@ -45,14 +42,28 @@ class CDI(wx.ToolBar):
         self.SetBackgroundColour("#000000")
 
 
-class Canvas2D(wx.Panel):
+class Canvas(wx.Panel):
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
+
+    def showCoordinateSystem(self, imgCoordinate: str):
+        img_2d_coordinate_ctrl = wx.StaticBitmap(
+            self, wx.ID_ANY, IconProvider.get(imgCoordinate)
+        )
+
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        sizer.Add(img_2d_coordinate_ctrl, 0, wx.ALIGN_LEFT | wx.ALIGN_BOTTOM)
+        self.SetSizer(sizer)
+
+
+class Canvas2D(Canvas):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.parent = parent
         self.name = "2-D View"
 
-        self.SetBackgroundColour("blue")
+        self.showCoordinateSystem("coordinates_2d_xy")
 
 
 class Window2D(fnb.FlatNotebook):
@@ -64,12 +75,14 @@ class Window2D(fnb.FlatNotebook):
         self.AddPage(self.canvas, self.canvas.name)
 
 
-class Canvas3D(wx.Panel):
+class Canvas3D(Canvas):
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
         self.parent = parent
         self.name = "3-D View"
+
+        self.showCoordinateSystem("coordinates_3d_xyz")
 
 
 class Window3D(fnb.FlatNotebook):
