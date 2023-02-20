@@ -1,29 +1,8 @@
-import functools
-import pathlib
-
 import wx
 import wx.lib.agw.flatmenu as fm
 
 from . import controls
-
-
-IMG_PATH = str((pathlib.Path(__file__).parent / "img/").absolute())
-
-
-class IconProvider:
-    """Provides and caches bitmap icons
-
-    Example:
-
-    >>> IconProvider.get("new") == IconProvider.get("new")
-    >>> True
-
-    """
-
-    @classmethod
-    @functools.cache
-    def get(cls, icon: str):
-        return wx.Bitmap(IMG_PATH + f"\\{icon}.gif")
+from .controls import IconProvider
 
 
 class MainFrame(wx.Frame):
