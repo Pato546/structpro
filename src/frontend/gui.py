@@ -28,6 +28,10 @@ class MainFrame(wx.Frame):
         self.toolbar.AddTool(wx.ID_ZOOM_IN, "zoom_in", IconProvider.get("zoom_in"))
         self.toolbar.AddTool(wx.ID_ZOOM_OUT, "zoom_out", IconProvider.get("zoom_out"))
         self.toolbar.AddSeparator()
+        # Add toolbars here
+        self.toolbar.AddSeparator()
+        self.toolbar.AddTool(wx.ID_ANY, "run", IconProvider.get("run"))
+        self.toolbar.AddSeparator()
         self.toolbar.Realize()
 
         self.mainWindow = MainWindow(self)
