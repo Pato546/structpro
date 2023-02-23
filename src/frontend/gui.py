@@ -235,6 +235,8 @@ class MainFrame(wx.Frame):
 
 
 class ModelViewWindow(wx.Panel):
+    """Manages the 2D and 3D Canvas"""
+
     def __init__(self, parent, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
 
@@ -259,32 +261,40 @@ class MainWindow(wx.Panel):
         super().__init__(parent, *args, **kwargs)
         self.parent = parent
 
-        self.SetBackgroundColour("red")
-        self.toolBar = wx.ToolBar(
+        # self.SetBackgroundColour("red")
+        self.leftToolBar = wx.ToolBar(
             self, style=wx.TB_VERTICAL | wx.TB_FLAT | wx.NO_BORDER
         )
-        self.toolBar.AddTool(wx.ID_ANY, "pointer", IconProvider.get("pointer"))
-        self.toolBar.AddSeparator()
-        self.toolBar.AddTool(wx.ID_ANY, "node", IconProvider.get("node"))
-        self.toolBar.AddSeparator()
-        self.toolBar.AddTool(wx.ID_ANY, "member", IconProvider.get("member"))
-        self.toolBar.AddSeparator()
-        self.toolBar.AddTool(wx.ID_ANY, "grid", IconProvider.get("grid"))
-        self.toolBar.AddSeparator()
-        self.toolBar.AddTool(wx.ID_ANY, "show_grid", IconProvider.get("show_grid"))
-        self.toolBar.AddSeparator()
-        self.toolBar.AddTool(wx.ID_ANY, "show_axes", IconProvider.get("show_axes"))
-        self.toolBar.AddSeparator()
-        self.toolBar.Realize()
+        self.leftToolBar.AddTool(wx.ID_ANY, "pointer", IconProvider.get("pointer"))
+        self.leftToolBar.AddSeparator()
+        self.leftToolBar.AddTool(wx.ID_ANY, "node", IconProvider.get("node"))
+        self.leftToolBar.AddSeparator()
+        self.leftToolBar.AddTool(wx.ID_ANY, "member", IconProvider.get("member"))
+        self.leftToolBar.AddSeparator()
+        self.leftToolBar.AddTool(wx.ID_ANY, "grid", IconProvider.get("grid"))
+        self.leftToolBar.AddSeparator()
+        self.leftToolBar.AddTool(wx.ID_ANY, "show_grid", IconProvider.get("show_grid"))
+        self.leftToolBar.AddSeparator()
+        self.leftToolBar.AddTool(wx.ID_ANY, "show_axes", IconProvider.get("show_axes"))
+        self.leftToolBar.AddSeparator()
+        self.leftToolBar.Realize()
+
+        # self.rightToolBar = wx.ToolBar(
+        #     self, style=wx.TB_VERTICAL | wx.TB_FLAT | wx.NO_BORDER
+        # )
+        # self.rightToolBar.Realize()
 
         self.modelViewWindow = ModelViewWindow(self)
         self.modelViewWindow.SetBackgroundColour("cyan")
 
         hbox = wx.BoxSizer(orient=wx.HORIZONTAL)
-        hbox.Add(self.toolBar, flag=wx.EXPAND)
+        hbox.Add(self.leftToolBar, flag=wx.EXPAND)
         hbox.Add(self.modelViewWindow, proportion=1, flag=wx.EXPAND)
+        # hbox.Add(self.rightToolBar, flag=wx.EXPAND)
 
         self.SetSizer(hbox)
+
+        self.Refresh()
 
         self.Bind(event=wx.EVT_LEFT_DOWN, handler=self.OnMouseDown)
 
