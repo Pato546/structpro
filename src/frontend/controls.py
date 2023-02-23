@@ -43,8 +43,11 @@ class CDI(wx.ToolBar):
 
 
 class Canvas(wx.Panel):
-    def __init__(self, parent, *args, **kwargs):
+    def __init__(self, parent, canvas_name, imgCoordinate, *args, **kwargs):
         super().__init__(parent, *args, **kwargs)
+
+        self.canvasName = canvas_name
+        self.showCoordinateSystem(imgCoordinate)
 
     def showCoordinateSystem(self, imgCoordinate: str):
         img_2d_coordinate_ctrl = wx.StaticBitmap(
@@ -57,13 +60,7 @@ class Canvas(wx.Panel):
 
 
 class Canvas2D(Canvas):
-    def __init__(self, parent, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
-
-        self.parent = parent
-        self.name = "2-D View"
-
-        self.showCoordinateSystem("coordinates_2d_xy")
+    pass
 
 
 class Window2D(fnb.FlatNotebook):
@@ -71,18 +68,12 @@ class Window2D(fnb.FlatNotebook):
         super().__init__(parent, *args, agwStyle=FLAT_NOTEBOOK_STYLES, **kwargs)
 
         self.parent = parent
-        self.canvas = Canvas2D(self)
-        self.AddPage(self.canvas, self.canvas.name)
+        self.canvas = Canvas2D(self, "2D-View", "coordinates_2d_xy")
+        self.AddPage(self.canvas, self.canvas.canvasName)
 
 
 class Canvas3D(Canvas):
-    def __init__(self, parent, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
-
-        self.parent = parent
-        self.name = "3-D View"
-
-        self.showCoordinateSystem("coordinates_3d_xyz")
+    pass
 
 
 class Window3D(fnb.FlatNotebook):
@@ -90,5 +81,5 @@ class Window3D(fnb.FlatNotebook):
         super().__init__(parent, *args, agwStyle=FLAT_NOTEBOOK_STYLES, **kwargs)
         self.parent = parent
 
-        self.canvas = Canvas3D(self)
-        self.AddPage(self.canvas, self.canvas.name)
+        self.canvas = Canvas3D(self, "3D-View", "coordinates_3d_xyz")
+        self.AddPage(self.canvas, self.canvas.canvasName)
