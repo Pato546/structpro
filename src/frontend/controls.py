@@ -44,7 +44,7 @@ class CDI(wx.ToolBar):
 
 class Canvas(wx.Panel):
     def __init__(self, parent, canvas_name, imgCoordinate, *args, **kwargs):
-        super().__init__(parent, *args, **kwargs)
+        super().__init__(parent, *args, style=wx.SIMPLE_BORDER, **kwargs)
 
         self.canvasName = canvas_name
         self.showCoordinateSystem(imgCoordinate)
