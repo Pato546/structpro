@@ -23,6 +23,8 @@ class MainFrame(wx.Frame):
         self.toolbar.AddTool(wx.ID_OPEN, "open", IconProvider.get("open"))
         self.toolbar.AddTool(wx.ID_SAVE, "save", IconProvider.get("save"))
         self.toolbar.AddSeparator()
+        self.toolbar.AddTool(wx.ID_PRINT, "print", IconProvider.get("printer-custom"))
+        self.toolbar.AddSeparator()
         self.toolbar.AddTool(wx.ID_UNDO, "undo", IconProvider.get("undo"))
         self.toolbar.AddTool(wx.ID_REDO, "redo", IconProvider.get("redo"))
         self.toolbar.AddTool(wx.ID_ZOOM_IN, "zoom_in", IconProvider.get("zoom_in"))
