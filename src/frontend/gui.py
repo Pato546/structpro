@@ -160,7 +160,7 @@ class MainFrame(wx.Frame):
             defineMenu, id=wx.ID_ANY, label="Frame Section", helpString=""
         )
         material = fm.FlatMenuItem(
-            defineMenu, id=wx.ID_ANY, label="Material", helpString=""
+            defineMenu, id=wx.ID_ANY, label="Material Property", helpString=""
         )
         defineMenu.AppendItem(load)
         defineMenu.AppendItem(frameSection)
