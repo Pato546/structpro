@@ -18,13 +18,7 @@ FLAT_NOTEBOOK_STYLES = (
 
 
 class IconProvider:
-    """Provides and caches bitmap icons
-
-    Example:
-
-    >>> IconProvider.get("new") == IconProvider.get("new")
-    >>> True
-    """
+    """Provides and caches bitmap icons"""
 
     @classmethod
     @functools.cache
